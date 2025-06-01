@@ -1,1 +1,62 @@
+/* src/App.css 
 
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f8;
+  color: #333;
+}
+
+nav {
+  background-color: #007bff;
+  padding: 10px 20px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-right: 15px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+form {
+  margin-top: 20px;
+}
+
+input[type="file"],
+input[type="email"],
+input[type="password"] {
+  padding: 8px;
+  margin-top: 6px;
+  width: 250px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+h2 {
+  color: #007bff;
+}
+
+div {
+  padding: 20px;
+}
+*/

@@ -11,7 +11,7 @@ const app = express();
 const cors = require('cors');
 
 app.use(cors({
-  origin: 'http://localhost:3003',  // or whichever port your React app is running on
+  origin: 'http://localhost:3000',  // or whichever port your React app is running on
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
