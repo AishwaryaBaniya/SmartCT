@@ -1,7 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './SignUp.css';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
   useEffect(() => {
     const monthSelect = document.getElementById('month-select');
     const daySelect = document.getElementById('day-select');
@@ -50,17 +56,53 @@ const SignUp = () => {
     yearSelect.addEventListener('change', updateDays);
   }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || 'Registration failed');
+        return;
+      }
+
+      alert('Registration successful! You can now log in.');
+      navigate('/');
+    } catch (err) {
+      setError('Network error or server unreachable');
+    }
+  };
+
   return (
     <div className="signup-container">
       <h2>Create a new account</h2>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="name-fields">
           <input type="text" placeholder="First name" required />
           <input type="text" placeholder="Last name" required />
         </div>
 
-        <input type="email" placeholder="Mobile number or email" required />
-        <input type="password" placeholder="New password" required />
+        <input
+          type="email"
+          placeholder="Mobile number or email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="New password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
         <label>Birthday</label>
         <div className="birthday-select">
@@ -81,6 +123,7 @@ const SignUp = () => {
         </p>
 
         <button type="submit">Sign Up</button>
+        {error && <p className="error-message">{error}</p>}
         <p className="login-link"><a href="/">Already have an account?</a></p>
       </form>
     </div>

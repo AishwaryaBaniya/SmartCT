@@ -1,13 +1,43 @@
 import React, { useState } from 'react';
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    console.log("Sending login request with:", { email, password });
     e.preventDefault();
-    onLogin(); // Add your authentication logic here
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          password: password.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || 'Login failed');
+        return;
+      }
+
+      // Save token and user to localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      onLogin();           // Update parent state
+      navigate('/dashboard'); // Redirect to dashboard
+    } catch (err) {
+      setError('Network error or server unreachable');
+    }
   };
 
   return (
@@ -23,6 +53,7 @@ function Login({ onLogin }) {
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
         <label htmlFor="password">Password</label>
@@ -32,6 +63,7 @@ function Login({ onLogin }) {
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
 
         <div className="options">
@@ -42,8 +74,11 @@ function Login({ onLogin }) {
         <button type="submit">Sign in</button>
       </form>
 
-      <p className="signup-text">Not a member? <a href="/signup">Create an account</a></p>
+      {error && <p className="error-message">{error}</p>}
 
+      <p className="signup-text">
+        Not a member? <a href="/signup">Create an account</a>
+      </p>
     </div>
   );
 }
