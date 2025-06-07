@@ -1,33 +1,55 @@
+// src/components/Dashboard.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import './Dashboard.css';
 
-function Dashboard() {
-  // Mock stats for now
-  const stats = {
-    totalScans: 25,
-    processed: 20,
-    pending: 5,
-  };
-
+const Dashboard = () => {
   return (
-    <div>
-      <h1>Welcome to SmartCT Dashboard</h1>
+    <div className="container">
+      <aside className="sidebar">
+        <div>
+          <h2>SmartCT</h2>
+          <nav>
+            <ul>
+              <li><a href="#">📊 Dashboard</a></li>
+              <li><a href="#">📤 Upload</a></li>
+              <li><a href="#">📁 Results</a></li>
+              <li><a href="#">⚙️ Settings</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div className="admin-info">
+          <a href="#" className="admin-button">👤 <strong>Admin</strong></a>
+        </div>
+      </aside>
 
-      <div className="my-4">
-        <h4>Summary</h4>
-        <ul>
-          <li>Total Scans Uploaded: {stats.totalScans}</li>
-          <li>Scans Processed: {stats.processed}</li>
-          <li>Scans Pending: {stats.pending}</li>
-        </ul>
-      </div>
+      <main className="main-content">
+        <h1>Welcome to SmartCT</h1>
+        <p>Your AI-powered abdominal trauma detection assistant</p>
 
-      <div className="my-4">
-        <Link to="/upload" className="btn btn-primary me-2">Upload New Scan</Link>
-        <Link to="/results" className="btn btn-secondary">View Scan Results</Link>
-      </div>
+        <div className="stats">
+          <div className="stat-box"><a href="#">Total Scans</a></div>
+          <div className="stat-box"><a href="#">Accuracy Rate</a></div>
+          <div className="stat-box"><a href="#">Average Time</a></div>
+        </div>
+
+        <div className="actions">
+          <a href="#" className="btn">🩻 New Scan</a>
+          <a href="#" className="btn">📊 View Results</a>
+          <a href="#" className="btn">⚙️ Settings</a>
+        </div>
+
+        <div className="activity">
+          <h2>Recent Activity</h2>
+          <ul>
+            <li><a href="#">CT_Scan_Report_001.pdf</a></li>
+            <li><a href="#">Scan_Results_April.csv</a></li>
+            <li><a href="#">NewUpload_May23.zip</a></li>
+          </ul>
+        </div>
+      </main>
     </div>
   );
-}
+};
 
 export default Dashboard;
+

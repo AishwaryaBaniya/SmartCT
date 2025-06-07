@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Login.css';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -6,42 +7,44 @@ function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // You can add your authentication logic here
-    onLogin();
+    onLogin(); // Add your authentication logic here
   };
 
   return (
-    <form onSubmit={handleSubmit} autoComplete="on">
-      <div className="mb-3">
-        <label htmlFor="emailInput" className="form-label">Email address</label>
+    <div className="login-container">
+      <h2>Smart<span>CT</span></h2>
+      <p>Sign in to access the detection system</p>
+
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">Email</label>
         <input
-          type="email"
-          id="emailInput"
-          name="email"
-          className="form-control"
+          type="text"
+          id="email"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"  // Important for autofill
-          required
         />
-      </div>
 
-      <div className="mb-3">
-        <label htmlFor="passwordInput" className="form-label">Password</label>
+        <label htmlFor="password">Password</label>
         <input
           type="password"
-          id="passwordInput"
-          name="password"
-          className="form-control"
+          id="password"
+          placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"  // Important for autofill
-          required
         />
-      </div>
 
-      <button type="submit" className="btn btn-primary">Login</button>
-    </form>
+        <div className="options">
+          <label><input type="checkbox" /> Remember me</label>
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit">Sign in</button>
+      </form>
+
+      <p className="signup-text">Not a member? <a href="/signup">Create an account</a></p>
+
+    </div>
   );
 }
 
