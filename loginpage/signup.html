@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account - SmartCT</title>
+  <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+  <div class="signup-container">
+    <h2>Create a new account</h2>
+
+    <form>
+      <div class="name-fields">
+        <input type="text" placeholder="First name" required>
+        <input type="text" placeholder="Last name" required>
+      </div>
+
+      <input type="email" placeholder="Mobile number or email" required>
+      <input type="password" placeholder="New password" required>
+
+      <label>Birthday</label>
+      <div class="birthday-select">
+        <select id="month-select"></select>
+        <select id="day-select"></select>
+        <select id="year-select"></select>
+      </div>
+
+      <label>Gender</label>
+      <div class="gender-options">
+        <label><input type="radio" name="gender"> Female</label>
+        <label><input type="radio" name="gender"> Male</label>
+       
+      </div>
+
+      <p class="terms">
+        By clicking Sign Up, you agree to our <a href="#">Terms</a>, 
+        <a href="#">Privacy Policy</a> and <a href="#">Cookies Policy</a>.
+      </p>
+
+      <button type="submit">Sign Up</button>
+
+      <!-- ✅ Updated link here -->
+      <p class="login-link"><a href="signin.html">Already have an account?</a></p>
+    </form>
+  </div>
+
+  <script>
+    const monthSelect = document.getElementById('month-select');
+    const daySelect = document.getElementById('day-select');
+    const yearSelect = document.getElementById('year-select');
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const today = new Date();
+    const currentMonth = today.getMonth(); 
+    const currentDay = today.getDate();
+    const currentYear = today.getFullYear();
+
+    // Populate months
+    monthNames.forEach((month, index) => {
+      const option = document.createElement('option');
+      option.value = index + 1;
+      option.textContent = month;
+      if (index === currentMonth) option.selected = true;
+      monthSelect.appendChild(option);
+    });
+
+    // Populate years from 1950 to 2025
+    for (let year = 1950; year <= 2025; year++) {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      if (year === currentYear) option.selected = true;
+      yearSelect.appendChild(option);
+    }
+
+    // Update days based on selected month/year
+    function updateDays() {
+      const selectedYear = parseInt(yearSelect.value);
+      const selectedMonth = parseInt(monthSelect.value);
+      const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+
+      daySelect.innerHTML = ''; 
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const option = document.createElement('option');
+        option.value = day;
+        option.textContent = day;
+        if (day === currentDay) option.selected = true;
+        daySelect.appendChild(option);
+      }
+    }
+
+    updateDays();
+    monthSelect.addEventListener('change', updateDays);
+    yearSelect.addEventListener('change', updateDays);
+  </script>
+</body>
+</html>
