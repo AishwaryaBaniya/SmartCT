@@ -1,0 +1,13 @@
+<!-- File: pages/account.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account Settings</title>
+</head>
+<body>
+  <h2>Account Settings</h2>
+  <p>This is the Account settings page.</p>
+  <a href="../settings.html">← Back to Settings</a>
+</body>
+</html>
