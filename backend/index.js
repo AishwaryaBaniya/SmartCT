@@ -11,7 +11,19 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors()); // Allow CORS from all origins during development
+app.use(cors({
+  origin: (origin, callback) => {
+    const allowed = ['http://localhost:3000', 'http://localhost:3003'];
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+
 app.use(express.json()); // Parse incoming JSON
 
 // Routes
