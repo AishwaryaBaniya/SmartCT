@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy & Security</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+    }
+
+    .page-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 60px 20px;
+    }
+
+    .privacy-box {
+      width: 100%;
+      max-width: 800px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border: 1px solid #ddd;
+    }
+
+    .main-title {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #333;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 15px;
+    }
+
+    .section {
+      margin-top: 30px;
+    }
+
+    .section h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #444;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 10px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .row.checkbox {
+      justify-content: flex-start;
+    }
+
+    .row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+    }
+
+    .label {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .btn {
+      padding: 6px 14px;
+      font-size: 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #0056cc;
+    }
+
+    .save-btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 30px;
+    }
+
+    .save-btn:hover {
+      background-color: #218838;
+    }
+
+    .button-container {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="privacy-box">
+      <h1 class="main-title">Privacy & Security</h1>
+
+      <!-- Account Security Section -->
+      <div class="section">
+        <h2>Account Security</h2>
+
+        <div class="row">
+          <span class="label">Change Password</span>
+          <button class="btn">Change</button>
+        </div>
+
+        <div class="row">
+          <span class="label">Change Email</span>
+          <button class="btn">Update</button>
+        </div>
+
+        <div class="row">
+          <span class="label">Change Phone Number</span>
+          <button class="btn">Update</button>
+        </div>
+
+        <div class="row">
+          <span class="label">Update Date of Birth</span>
+          <button class="btn">Edit</button>
+        </div>
+
+        <div class="row checkbox">
+          <input type="checkbox" id="2fa" checked>
+          <label for="2fa" class="label">Enable Two-Factor Authentication</label>
+        </div>
+      </div>
+
+      <!-- Privacy Preferences Section -->
+      <div class="section">
+        <h2>Privacy Preferences</h2>
+
+        <div class="row checkbox">
+          <input type="checkbox" id="private-scans" checked>
+          <label for="private-scans" class="label">Make my scans private by default</label>
+        </div>
+
+        <div class="row checkbox">
+          <input type="checkbox" id="ai-usage">
+          <label for="ai-usage" class="label">Allow usage data to improve AI</label>
+        </div>
+
+        <div class="button-container">
+          <button class="save-btn">Update Privacy Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
