@@ -10,10 +10,10 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// CORS Middleware
 app.use(cors({
   origin: (origin, callback) => {
-    const allowed = ['http://localhost:3000', 'http://localhost:3003'];
+    const allowed = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'];
     if (!origin || allowed.includes(origin)) {
       callback(null, true);
     } else {
@@ -23,19 +23,23 @@ app.use(cors({
   credentials: true
 }));
 
-
-app.use(express.json()); // Parse incoming JSON
+// Parse JSON
+app.use(express.json());
 
 // Routes
 app.use('/api/scans', scanRoutes);
 app.use('/api/auth', authRoutes);
 
-// Start Server after MongoDB connects
+// MongoDB connect
 const PORT = process.env.PORT || 5000;
-
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => {
     console.log('✅ MongoDB connected');
+    console.log('🔍 Connected to MongoDB database name:', mongoose.connection.name);
+
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
@@ -43,4 +47,3 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => {
     console.error('❌ Database connection failed:', err);
   });
-

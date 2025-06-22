@@ -66,7 +66,7 @@ const Dashboard = () => {
         </div>
         <div className="admin-info">
           <a href="#" className="admin-button">👤 <strong>Admin</strong></a>
-          <button onClick={handleLogout} href="#" className="btn">🚪 Logout</button>
+          <button onClick={handleLogout} href="login.js" className="btn">🚪 Logout</button>
         </div>
       </aside>
 
