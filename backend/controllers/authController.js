@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 // ✅ Login handler (no bcrypt)
 const loginUser = async (req, res) => {
@@ -18,7 +19,7 @@ const loginUser = async (req, res) => {
     console.log("✅ Plain password from form:", password);
     console.log("🗃️ Stored password in DB:", user.password);
 
-    const isMatch = password === user.password;
+    const isMatch = bcrypt.compare(password, user.password)
     console.log("🟢 Password match:", isMatch);
 
     if (!isMatch) {
@@ -56,6 +57,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    console.log(password)
     const newUser = new User({ email, password }); // saving plain text password
     await newUser.save();
     console.log('✅ User saved:', newUser);
