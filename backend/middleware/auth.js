@@ -61,7 +61,7 @@ const authenticateToken = async (req, res, next) => {
       return res.status(403).json({ message: "Invalid token" });
     }
     if (error.name === "TokenExpiredError") {
-      return res.status(403).json({ 
+      return res.status(403).json({
         message: "Token expired",
         code: "TOKEN_EXPIRED" // Add specific code for client-side handling
       });
@@ -82,7 +82,7 @@ const verifyRefreshToken = async (req, res, next) => {
 
     const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
     const user = await User.findById(decoded.userId);
-    
+
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
@@ -91,7 +91,7 @@ const verifyRefreshToken = async (req, res, next) => {
       userId: user._id,
       email: user.email
     };
-    
+
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {

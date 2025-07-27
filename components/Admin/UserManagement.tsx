@@ -17,15 +17,20 @@ const UserManagement = () => {
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterRole, setFilterRole] = useState("all")
 
- const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<any[]>([])
 
-useEffect(() => {
-  fetch("http://localhost:5000/api/users")
-    .then((res) => res.json())
-    .then((data) => setUsers(data))
-    .catch((err) => console.error("Error fetching users:", err))
-}, [])
-
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const data = await fetch("http://localhost:5000/api/users");
+      const users = (await data.json());
+      if (Array.isArray(users.users)) {
+        setUsers(users.users);
+      } else {
+        throw new Error("Response is not an array of users");
+      }
+    };
+    fetchUsers();
+  }, [])
 
   const filteredUsers = users.filter((user) => {
     const fullName = `${user.firstName} ${user.lastName}`.toLowerCase()
@@ -146,7 +151,7 @@ useEffect(() => {
                 </div>
               </CardContent>
             </Card>
-           
+
           </div>
 
           {/* Filters and Search */}
@@ -174,7 +179,7 @@ useEffect(() => {
                     <SelectItem value="pending">Pending</SelectItem>
                   </SelectContent>
                 </Select>
-                
+
               </div>
             </CardContent>
           </Card>
@@ -183,13 +188,13 @@ useEffect(() => {
           <Card className="border-0 shadow-lg">
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-gray-900">Users ({filteredUsers.length})</CardTitle>
-              
+
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>User</TableHead>                  
+                    <TableHead>User</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Last Login</TableHead>
                     <TableHead>Joined</TableHead>
@@ -218,7 +223,7 @@ useEffect(() => {
                           </div>
                         </div>
                       </TableCell>
-                     
+
                       <TableCell>
                         <Badge className={getStatusColor(user.status)}>{user.status}</Badge>
                       </TableCell>
@@ -228,7 +233,7 @@ useEffect(() => {
                       <TableCell>
                         <span className="text-sm text-gray-600">{formatDate(user.createdAt)}</span>
                       </TableCell>
-                      
+
                     </TableRow>
                   ))}
                 </TableBody>

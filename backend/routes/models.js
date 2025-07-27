@@ -36,9 +36,9 @@ const upload = multer({
     }
     cb(null, true);
   },
-  limits: {
-    fileSize: 100 * 1024 * 1024, // 100MB limit
-  },
+  // limits: {
+  //   fileSize: 100 * 1024 * 1024, // 100MB limit
+  // },
 });
 
 // ==================== ROUTE HANDLERS ====================
@@ -52,8 +52,8 @@ const handleModelUpload = async (req, res) => {
     }
 
     if (!name || !version || !accuracy) {
-      return res.status(400).json({ 
-        message: "Name, version, and accuracy are required" 
+      return res.status(400).json({
+        message: "Name, version, and accuracy are required"
       });
     }
 
@@ -85,9 +85,9 @@ const handleModelUpload = async (req, res) => {
     });
   } catch (error) {
     console.error("Model upload error:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Failed to upload model",
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -96,7 +96,7 @@ const getActiveModel = async (req, res) => {
   try {
     const model = await Model.findOne({ status: "Active" })
       .sort({ accuracy: -1, deployedDate: -1 });
-    
+
     if (!model) {
       return res.status(404).json({ message: "No active model found" });
     }
@@ -104,9 +104,9 @@ const getActiveModel = async (req, res) => {
     res.json(model);
   } catch (error) {
     console.error("Error fetching active model:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Failed to fetch active model",
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -117,9 +117,9 @@ const getModelHistory = async (req, res) => {
     res.json(models);
   } catch (error) {
     console.error("Error fetching model history:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Failed to fetch model history",
-      error: error.message 
+      error: error.message
     });
   }
 };

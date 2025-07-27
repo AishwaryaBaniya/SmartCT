@@ -24,16 +24,16 @@ const scanProcessingQueue = new Queue("scan-processing", "redis://127.0.0.1:6379
 // Helper function to compute overall risk
 const computeOverallRisk = (results) => {
   if (!results) return null;
-  
+
   const severities = [];
-  
+
   // Check each organ's severity if it exists
   if (results.liver?.severity) severities.push(results.liver.severity);
   if (results.kidney?.severity) severities.push(results.kidney.severity);
   if (results.spleen?.severity) severities.push(results.spleen.severity);
   if (results.bowel?.severity) severities.push(results.bowel.severity);
   if (results.extravasation?.severity) severities.push(results.extravasation.severity);
-  
+
   if (severities.includes("high")) return "High Risk";
   if (severities.includes("moderate")) return "Moderate Risk";
   if (severities.includes("low")) return "Low Risk";
@@ -63,16 +63,16 @@ scanProcessingQueue.process(async (job) => {
 
   try {
     // Update status to Processing
-    await Scan.findByIdAndUpdate(scanId, { 
+    await Scan.findByIdAndUpdate(scanId, {
       status: "Processing",
       processingStarted: processingStart
     });
 
     console.log(`Processing scan ${scanId}...`);
-    
+
     // Execute Python script
     const modelPath = await getActiveModelPath();
-    
+
     // Verify model exists
     if (!fs.existsSync(modelPath)) {
       throw new Error(`Model file not found: ${modelPath}`);
@@ -120,47 +120,47 @@ scanProcessingQueue.process(async (job) => {
     const processingDuration = processingEnd - processingStart;
 
     const dbResults = {
-  overallRisk: computeOverallRisk(results),
-  confidence: Math.round((results.confidence || 0) * 100), // Ensure we have a number
-  findings: {
-    bowel: {
-      status: results.bowel?.status || "Not Analyzed",
-      severity: results.bowel?.severity || "normal",
-      confidence: Math.round((results.bowel?.confidence || 0) * 100)
-    },
-    extravasation: {
-      status: results.extravasation?.status || "Not Analyzed",
-      severity: results.extravasation?.severity || "normal",
-      confidence: Math.round((results.extravasation?.confidence || 0) * 100)
-    },
-    liver: {
-      status: results.liver?.status || "Not Analyzed",
-      severity: results.liver?.severity || "normal",
-      confidence: Math.round((results.liver?.confidence || 0) * 100)
-    },
-    kidney: {
-      status: results.kidney?.status || "Not Analyzed",
-      severity: results.kidney?.severity || "normal",
-      confidence: Math.round((results.kidney?.confidence || 0) * 100)
-    },
-    spleen: {
-      status: results.spleen?.status || "Not Analyzed",
-      severity: results.spleen?.severity || "normal",
-      confidence: Math.round((results.spleen?.confidence || 0) * 100)
-    }
-  },
-  recommendations: [
-    "Follow up with specialist",
-    "Consider additional imaging"
-  ],
-  summary: "AI analysis completed",
-  technicalDetails: {
-    modelVersion: "1.0.0",
-    processingNode: "GPU-1",
-    algorithmUsed: "DeepLearning v2",
-    qualityScore: 95
-  }
-};
+      overallRisk: computeOverallRisk(results),
+      confidence: Math.round((results.confidence || 0) * 100), // Ensure we have a number
+      findings: {
+        bowel: {
+          status: results.bowel?.status || "Not Analyzed",
+          severity: results.bowel?.severity || "normal",
+          confidence: Math.round((results.bowel?.confidence || 0) * 100)
+        },
+        extravasation: {
+          status: results.extravasation?.status || "Not Analyzed",
+          severity: results.extravasation?.severity || "normal",
+          confidence: Math.round((results.extravasation?.confidence || 0) * 100)
+        },
+        liver: {
+          status: results.liver?.status || "Not Analyzed",
+          severity: results.liver?.severity || "normal",
+          confidence: Math.round((results.liver?.confidence || 0) * 100)
+        },
+        kidney: {
+          status: results.kidney?.status || "Not Analyzed",
+          severity: results.kidney?.severity || "normal",
+          confidence: Math.round((results.kidney?.confidence || 0) * 100)
+        },
+        spleen: {
+          status: results.spleen?.status || "Not Analyzed",
+          severity: results.spleen?.severity || "normal",
+          confidence: Math.round((results.spleen?.confidence || 0) * 100)
+        }
+      },
+      recommendations: [
+        "Follow up with specialist",
+        "Consider additional imaging"
+      ],
+      summary: "AI analysis completed",
+      technicalDetails: {
+        modelVersion: "1.0.0",
+        processingNode: "GPU-1",
+        algorithmUsed: "DeepLearning v2",
+        qualityScore: 95
+      }
+    };
 
     // Update scan with results
     await Scan.findByIdAndUpdate(scanId, {
@@ -183,11 +183,11 @@ scanProcessingQueue.process(async (job) => {
 
   } catch (error) {
     console.error(`Error processing scan ${scanId}:`, error);
-    
+
     const processingEnd = new Date();
     const processingDuration = processingEnd - processingStart;
 
-    await Scan.findByIdAndUpdate(scanId, { 
+    await Scan.findByIdAndUpdate(scanId, {
       status: "Failed",
       error: error.message,
       processingCompleted: processingEnd,
@@ -226,10 +226,40 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ 
+const upload = multer({
   storage,
   limits: {
     fileSize: 500 * 1024 * 1024 // 500MB limit
+  }
+});
+
+
+router.get("/average-time", async (req, res) => {
+  try {
+    const result = await Scan.aggregate([
+      {
+        $match: {
+          status: "Completed",
+          processingTime: { $exists: true, $gt: 0 }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          averageTime: { $avg: "$processingTime" },
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    res.json({
+      averageTime: result[0] ? (result[0].averageTime / 1000).toFixed(1) : 0,
+      scanCount: result[0]?.count || 0
+    });
+
+  } catch (error) {
+    console.error("Error calculating average time:", error);
+    res.status(500).json({ message: "Error calculating average time" });
   }
 });
 
@@ -246,8 +276,8 @@ router.post("/upload", authenticateToken, upload.single("scan"), async (req, res
     let fileType;
     if (file.originalname.toLowerCase().endsWith('.zip')) {
       fileType = 'dicom_zip';
-    } else if (file.originalname.toLowerCase().endsWith('.nii') || 
-               file.originalname.toLowerCase().endsWith('.nii.gz')) {
+    } else if (file.originalname.toLowerCase().endsWith('.nii') ||
+      file.originalname.toLowerCase().endsWith('.nii.gz')) {
       fileType = 'nifti';
     } else {
       return res.status(400).json({ message: "Unsupported file format" });
@@ -269,17 +299,17 @@ router.post("/upload", authenticateToken, upload.single("scan"), async (req, res
 
 
     await newScan.save();
-    
+
     // Log activity
     await Activity.create({
       type: "scan",
       user: userName || userEmail || userId.toString(),
       action: "Uploaded a new CT scan",
       status: "success",
-      metadata: { 
+      metadata: {
         scanId: newScan._id,
         fileType,
-        size: file.size 
+        size: file.size
       }
     });
 
@@ -294,15 +324,15 @@ router.post("/upload", authenticateToken, upload.single("scan"), async (req, res
       startedAt: new Date()
     });
 
-    res.status(201).json({ 
-      message: "Scan uploaded and queued", 
+    res.status(201).json({
+      message: "Scan uploaded and queued",
       scanId: newScan._id,
       status: "Queued"
     });
 
   } catch (err) {
     console.error("Scan upload error:", err);
-    if (req.file?.path) fs.unlink(req.file.path, () => {});
+    if (req.file?.path) fs.unlink(req.file.path, () => { });
     res.status(500).json({ message: "Server error during upload", error: err.message });
   }
 });
@@ -356,9 +386,9 @@ router.get("/:scanId", authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching scan:", error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       message: "Server error",
-      error: error.message 
+      error: error.message
     });
   }
 });
@@ -367,7 +397,7 @@ router.get("/:scanId", authenticateToken, async (req, res) => {
 router.get("/:scanId/status", authenticateToken, async (req, res) => {
   try {
     const { scanId } = req.params;
-    
+
     if (!mongoose.Types.ObjectId.isValid(scanId)) {
       return res.status(400).json({ message: "Invalid scan ID" });
     }
@@ -376,7 +406,7 @@ router.get("/:scanId/status", authenticateToken, async (req, res) => {
       _id: scanId,
       userId: req.user.userId
     }).select('status results error createdAt processingStarted processingCompleted');
-    
+
     if (!scan) {
       return res.status(404).json({ message: "Scan not found or unauthorized" });
     }
@@ -393,14 +423,14 @@ router.get("/:scanId/status", authenticateToken, async (req, res) => {
       scanId: scan._id,
       progress,
       error: scan.error,
-      processingTime: scan.processingStarted && scan.processingCompleted ? 
+      processingTime: scan.processingStarted && scan.processingCompleted ?
         Math.round((scan.processingCompleted - scan.processingStarted) / 1000) : null
     });
   } catch (error) {
     console.error("Error checking scan status:", error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       message: "Server error",
-      error: error.message 
+      error: error.message
     });
   }
 });
@@ -409,14 +439,14 @@ router.get("/:scanId/status", authenticateToken, async (req, res) => {
 router.get("/:scanId/public-status", async (req, res) => {
   try {
     const { scanId } = req.params;
-    
+
     if (!mongoose.Types.ObjectId.isValid(scanId)) {
       return res.status(400).json({ message: "Invalid scan ID" });
     }
 
     const scan = await Scan.findById(scanId)
       .select('status progress');
-      
+
     if (!scan) {
       return res.status(404).json({ message: "Scan not found" });
     }
@@ -427,9 +457,9 @@ router.get("/:scanId/public-status", async (req, res) => {
     });
   } catch (error) {
     console.error("Error checking public scan status:", error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       message: "Server error",
-      error: error.message 
+      error: error.message
     });
   }
 });
@@ -472,41 +502,13 @@ router.get("/", authenticateToken, async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching scans:", err);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Server error",
-      error: err.message 
+      error: err.message
     });
   }
 });
 
-router.get("/average-time", authenticateToken, async (req, res) => {
-  try {
-    const result = await Scan.aggregate([
-      {
-        $match: {
-          status: "Completed",
-          processingTime: { $exists: true, $gt: 0 }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          averageTime: { $avg: "$processingTime" },
-          count: { $sum: 1 }
-        }
-      }
-    ]);
-
-    res.json({
-      averageTime: result[0] ? (result[0].averageTime / 1000).toFixed(1) : 0,
-      scanCount: result[0]?.count || 0
-    });
-    
-  } catch (error) {
-    console.error("Error calculating average time:", error);
-    res.status(500).json({ message: "Error calculating average time" });
-  }
-});
 // In your routes/scan.js temporarily add:
 router.get("/test-scans", async (req, res) => {
   const scans = await Scan.find({ status: "Completed" });

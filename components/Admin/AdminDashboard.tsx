@@ -6,7 +6,6 @@ import {
   Card, CardContent, CardDescription, CardHeader, CardTitle
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import {
   Users,
@@ -175,7 +174,7 @@ const AdminDashboard = () => {
               <Badge variant="secondary" className="bg-green-100 text-green-800">
                 System Online
               </Badge>
-              
+
             </div>
           </div>
 

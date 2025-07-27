@@ -50,55 +50,55 @@ const Dashboard = () => {
         try {
           const token = localStorage.getItem("token");
           if (!token) throw new Error("No authentication token found");
-          
+
           console.log("Fetching average time with token:", token);
-          
+
           const timeRes = await fetch("http://localhost:5000/api/scans/average-time", {
-            headers: { 
+            headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json"
             },
           });
-          
+
           console.log("Average time response status:", timeRes.status);
-          
+
           if (!timeRes.ok) {
             const errorBody = await timeRes.text();
             console.error("Average time error response:", errorBody);
             throw new Error(`HTTP error! status: ${timeRes.status}`);
           }
-          
+
           const timeData = await timeRes.json();
           console.log("Average time data:", timeData);
           setAverageTime(`${timeData.averageTime?.toFixed(1) ?? '2.0'}s`);
-       } catch (error) {
-  // Type guard to check if it's an Error
-  if (error instanceof Error) {
-    console.error("Detailed average time fetch error:", {
-      message: error.message,
-      stack: error.stack,
-      url: "http://localhost:5000/api/scans/average-time"
-    });
-    setErrors(prev => ({ ...prev, averageTime: "Using default time" }));
-  } else {
-    console.error("Unknown error type:", error);
-    setErrors(prev => ({ ...prev, averageTime: "Unknown error occurred" }));
-  }
-  setAverageTime("2.0s");
-}
+        } catch (error) {
+          // Type guard to check if it's an Error
+          if (error instanceof Error) {
+            console.error("Detailed average time fetch error:", {
+              message: error.message,
+              stack: error.stack,
+              url: "http://localhost:5000/api/scans/average-time"
+            });
+            setErrors(prev => ({ ...prev, averageTime: "Using default time" }));
+          } else {
+            console.error("Unknown error type:", error);
+            setErrors(prev => ({ ...prev, averageTime: "Unknown error occurred" }));
+          }
+          setAverageTime("2.0s");
+        }
 
         // Fetch user scans if authenticated
         if (isAuthenticated) {
           try {
             const token = localStorage.getItem("token")
             if (!token) throw new Error("No authentication token found")
-            
+
             const scansRes = await fetch("http://localhost:5000/api/scans", {
               headers: { Authorization: `Bearer ${token}` },
             })
-            
+
             if (!scansRes.ok) throw new Error("Failed to fetch user scans")
-            
+
             const scansData = await scansRes.json()
             setScanCount(scansData.scans?.length || scansData.length || 0)
           } catch (err) {

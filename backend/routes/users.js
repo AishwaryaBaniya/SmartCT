@@ -13,12 +13,12 @@ router.use("/uploads/profile-pics", express.static(path.join(__dirname, "../uplo
 
 // Multer config
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function(req, file, cb) {
     const dir = path.join(__dirname, "../uploads/profile-pics");
     fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
-  filename: function (req, file, cb) {
+  filename: function(req, file, cb) {
     const ext = path.extname(file.originalname);
     cb(null, `${req.user.userId}-${Date.now()}${ext}`);
   },
@@ -110,7 +110,7 @@ router.post("/change-password", authenticateToken, async (req, res) => {
     const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    const isMatch = bcrypt.compare(currentPassword, user.password);
     if (!isMatch) return res.status(401).json({ error: "Incorrect current password" });
 
     user.password = await bcrypt.hash(newPassword.trim(), 12);
@@ -122,5 +122,17 @@ router.post("/change-password", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+router.get("", async (req, res) => {
+  try {
+    const users = await User.find();
+    console.log(users);
+    res.json({ users });
+  } catch (error) {
+    console.error("Change password error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+
+})
 
 module.exports = router;

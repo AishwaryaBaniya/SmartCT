@@ -14,11 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000
 })
-.then(() => console.log("✅ Connected to MongoDB"))
-.catch((err) => {
-  console.error("❌ MongoDB connection error:", err);
-  process.exit(1);
-});
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 // Middleware
 // Replace your current CORS middleware with this:
@@ -56,7 +56,7 @@ app.use("/api/verify-code", verifyCodeRoute);
 app.use("/api/privacy", privacyRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/models", modelRoutes);
-app.use("/api/scans", authenticateToken);
+// app.use("/api/scans", authenticateToken);
 app.use("/api/scans", scanRoutes);
 app.use("/api/test", (req, res) => res.send("Test working"));
 
