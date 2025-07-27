@@ -1,0 +1,2 @@
+backend/uploads/models/*.pth filter=lfs diff=lfs merge=lfs -text
+backend/uploads/scans/*.nii filter=lfs diff=lfs merge=lfs -text
